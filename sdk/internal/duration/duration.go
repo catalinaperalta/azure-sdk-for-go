@@ -40,7 +40,7 @@ func Parse(s string) (time.Duration, error) {
 	iso8601Format := regexp.MustCompile(`P(\d+[\.\d]+?Y)?(\d+[\.\d]+?M)?(\d+[\.\d]+?D)?T?(\d+[\.\d]+?H)?(\d+[\.\d]+?M)?(\d+[\.\d]+?S)?`)
 	if matches := iso8601Format.FindStringSubmatch(s); len(matches) > 0 {
 		return parseISO8601(matches)
-	} else if d, err := time.ParseDuration(s); err != nil {
+	} else if d, err := time.ParseDuration(s); err == nil {
 		return d, nil
 	}
 	return 0, errors.New("Could not find a valid duration format")

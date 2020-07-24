@@ -44,4 +44,11 @@ func TestParseDuration(t *testing.T) {
 	if p != time.Duration(0.5*float64(time.Second)) {
 		t.Fatalf("Did not receive the correct value for the duration.\nExpected: 10707252011000000, Received: %s", p.String())
 	}
+	p, err = Parse("3h2m1s")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p != time.Duration(3*time.Hour+2*time.Minute+1*time.Second) {
+		t.Fatalf("Did not receive the correct value for the duration.\nExpected: 10707252011000000, Received: %s", p.String())
+	}
 }
