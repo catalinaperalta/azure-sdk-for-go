@@ -46,9 +46,9 @@ func Parse(s string) (time.Duration, error) {
 	return 0, errors.New("Could not find a valid duration format")
 }
 
-// DurationToISO8601String parses a time.Duration into a string in the format of ISO 8601 duration.
+// ToISO8601 parses a time.Duration into a string in the format of ISO 8601 duration.
 // This function provides up to millisecond precision.
-func DurationToISO8601String(duration time.Duration) string {
+func ToISO8601(duration time.Duration) string {
 	s := "P"
 	days, remainder := duration.Milliseconds()/8.64e+7, duration.Milliseconds()%8.64e+7
 	hours, remainder := remainder/3.6e+6, remainder%3.6e+6
