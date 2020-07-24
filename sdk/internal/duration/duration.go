@@ -27,9 +27,9 @@ func parseISO8601(matches []string) (time.Duration, error) {
 	years := parseFloat64(matches[1]) * float64(time.Hour*24*365)
 	months := parseFloat64(matches[2]) * float64(time.Hour*24*30)
 	days := parseFloat64(matches[3]) * float64(time.Hour*24)
-	hours := parseFloat64(matches[4]) * float64(time.Hour)
-	minutes := parseFloat64(matches[5]) * float64(time.Minute)
-	seconds := parseFloat64(matches[6]) * float64(time.Second)
+	hours := parseFloat64(matches[5]) * float64(time.Hour)
+	minutes := parseFloat64(matches[6]) * float64(time.Minute)
+	seconds := parseFloat64(matches[7]) * float64(time.Second)
 	// problem here are years and months
 	return time.Duration(years + months + days + hours + minutes + seconds), nil
 }
@@ -37,7 +37,7 @@ func parseISO8601(matches []string) (time.Duration, error) {
 // Parse will check for a valid duration format and parse according to the identified format in order
 // to return a valid time.Duration. If a valid format is not received it will fail.
 func Parse(s string) (time.Duration, error) {
-	iso8601Format := regexp.MustCompile(`P(\d+[\.\d]+?Y)?(\d+[\.\d]+?M)?(\d+[\.\d]+?D)?T?(\d+[\.\d]+?H)?(\d+[\.\d]+?M)?(\d+[\.\d]+?S)?`)
+	iso8601Format := regexp.MustCompile(`P(\d+[\.\d]+?Y)?(\d+[\.\d]+?M)?(\d+[\.\d]+?D)?(T(\d+[\.\d]+?H)?(\d+[\.\d]+?M)?(\d+[\.\d]+?S)?)?`)
 	if matches := iso8601Format.FindStringSubmatch(s); len(matches) > 0 {
 		return parseISO8601(matches)
 	} else if d, err := time.ParseDuration(s); err == nil {
