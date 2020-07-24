@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-package durations
+package duration
 
 import (
 	"errors"
@@ -22,23 +22,28 @@ func parseFloat64(value string) float64 {
 	return parsed
 }
 
-// ParseDuration takes a string in the ISO 8601 duration format and parses it to a time.Duration.
-// If a valid format is not received it will fail.
-func ParseDuration(s string) (time.Duration, error) {
-	durationRegex := regexp.MustCompile(`P(\d+[\.\d]+?Y)?(\d+[\.\d]+?M)?(\d+[\.\d]+?D)?T?(\d+[\.\d]+?H)?(\d+[\.\d]+?M)?(\d+[\.\d]+?S)?`)
-	matches := durationRegex.FindStringSubmatch(s)
-	if len(matches) == 0 {
-		return 0, errors.New("did not find any valid duration matches")
-	}
+// parseISO8601 takes a slice of token strings that it will parse into a time.Duration.
+func parseISO8601(matches []string) (time.Duration, error) {
 	years := parseFloat64(matches[1]) * float64(time.Hour*24*365)
 	months := parseFloat64(matches[2]) * float64(time.Hour*24*30)
 	days := parseFloat64(matches[3]) * float64(time.Hour*24)
 	hours := parseFloat64(matches[4]) * float64(time.Hour)
 	minutes := parseFloat64(matches[5]) * float64(time.Minute)
 	seconds := parseFloat64(matches[6]) * float64(time.Second)
-
 	// problem here are years and months
 	return time.Duration(years + months + days + hours + minutes + seconds), nil
+}
+
+// Parse will check for a valid duration format and parse according to the identified format in order
+// to return a valid time.Duration. If a valid format is not received it will fail.
+func Parse(s string) (time.Duration, error) {
+	iso8601Format := regexp.MustCompile(`P(\d+[\.\d]+?Y)?(\d+[\.\d]+?M)?(\d+[\.\d]+?D)?T?(\d+[\.\d]+?H)?(\d+[\.\d]+?M)?(\d+[\.\d]+?S)?`)
+	if matches := iso8601Format.FindStringSubmatch(s); len(matches) > 0 {
+		return parseISO8601(matches)
+	} else if d, err := time.ParseDuration(s); err != nil {
+		return d, nil
+	}
+	return 0, errors.New("Could not find a valid duration format")
 }
 
 // DurationToISO8601String parses a time.Duration into a string in the format of ISO 8601 duration.
