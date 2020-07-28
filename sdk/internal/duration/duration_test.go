@@ -4,17 +4,34 @@
 package duration
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
 
 func TestParse(t *testing.T) {
-	p, err := Parse("P123DT22H14M12.011S")
+	p, err := Parse("P-123DT22H14M12.011S")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p != time.Duration(-10707252011000000) {
+		t.Fatalf("Did not receive the correct value for the duration.\nExpected: -10707252011000000, Received: %s", p.String())
+	}
+	p, err = Parse("P123DT22H14M12.011S")
 	if err != nil {
 		t.Fatal(err)
 	}
 	if p != time.Duration(10707252011000000) {
 		t.Fatalf("Did not receive the correct value for the duration.\nExpected: 10707252011000000, Received: %s", p.String())
+	}
+	p, err = Parse("P1Y1DT1H")
+	if err != nil {
+		t.Fatal(err)
+	}
+	// change condition to simple check for an hour range
+	if p != time.Duration(24*365*time.Hour+24*time.Hour+time.Hour) {
+		fmt.Println(p.Hours())
+		t.Fatalf("Did not receive the correct value for the duration.\nExpected: -10707252011000000, Received: %s", p.String())
 	}
 	p, err = Parse("PT12H")
 	if err != nil {
@@ -45,11 +62,8 @@ func TestParse(t *testing.T) {
 		t.Fatalf("Did not receive the correct value for the duration.\nExpected: 500000000, Received: %s", p.String())
 	}
 	p, err = Parse("3h2m1s")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if p != time.Duration(3*time.Hour+2*time.Minute+1*time.Second) {
-		t.Fatalf("Did not receive the correct value for the duration.\nExpected: 10921000000000, Received: %s", p.String())
+	if err == nil {
+		t.Fatal("expected an error")
 	}
 }
 
